@@ -5,7 +5,10 @@ A complete demonstration of serving GeoParquet files via MapServer with OGC API 
 ## 🚀 Quick Start
 
 ```bash
-# Build Caddy with CGI support
+# Install pixi environment
+pixi install
+
+#Install xcaddy and Build Caddy with CGI support
 pixi run build-caddy
 
 # Start the server
