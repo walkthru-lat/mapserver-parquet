@@ -1,0 +1,114 @@
+MAP
+  NAME "GeoParquetExample"
+  SIZE 800 600
+  EXTENT -180 -90 180 90
+  IMAGECOLOR "#6DA9D2"
+
+  PROJECTION
+    "init=epsg:4326"
+  END
+
+  # Standard PNG output for quick rendering/debugging
+  OUTPUTFORMAT
+    NAME "png"
+    DRIVER "AGG/PNG"
+  END
+
+  # http://localhost:8080/walkthru?MAP=GEOPARQUET&MODE=tile&TILE={x}+{y}+{z}&LAYERS=countries&map.imagetype=mvt
+  OUTPUTFORMAT
+    NAME "mvt"
+    DRIVER "MVT"
+    MIMETYPE "application/vnd.mapbox-vector-tile"
+    EXTENSION "pbf"
+  END
+
+  # OGR/GEOJSON output so OGC API can serve collections/items as JSON
+  OUTPUTFORMAT
+    NAME "application/json"
+    DRIVER "OGR/GEOJSON"
+    MIMETYPE "application/json"
+    FORMATOPTION "FORM=SIMPLE"
+    FORMATOPTION "STORAGE=memory"
+  END
+
+  # http://localhost:8080/walkthru?MAP=GEOPARQUET1&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0
+  # http://localhost:8080/walkthru?MAP=GEOPARQUET1&mode=ogcapi&f=json
+  WEB
+    METADATA
+      "ows_title" "Countries (DuckDB)"
+      "ows_srs" "EPSG:4326"
+      "gml_include_items" "all"
+      "wfs_enable_request" "*"
+      # --- Common OWS/WFS/OGC API metadata ---
+      "ows_enable_request" "*"      # allow all OWS requests
+      "oga_enable_request" "*"      # enable OGC API requests
+
+      "ows_title" "GeoParquet Demo" # recommended for OGC API
+      "ows_abstract" "Demo service exposing GeoParquet as WFS, OGC API Features, and MVT tiles"
+
+      # Root URL for OGC API JSON/HTML responses
+      # Adjust to your Caddy path (here: /walkthru)
+      "oga_onlineresource" "http://localhost:8080/walkthru/DUCKDB/ogcapi"
+
+      # Location of HTML templates for OGC API (removed - using env var instead)
+      # "oga_html_template_directory" ".\\templates\\html-bootstrap"
+
+      # WFS-specific metadata
+      "wfs_title" "GeoParquet WFS Demo"
+      "wfs_srs" "EPSG:4326"
+    END
+  END
+
+  # --- Layer definition for Parquet data with OGC API support ---
+  LAYER
+    NAME "countries"
+    TYPE POLYGON
+    STATUS ON
+    EXTENT -180 -90 180 90
+
+    # Data source: Standard OGR connection to Parquet file
+    #
+    # SOLUTION FOR PARQUET FILES WITHOUT EXPLICIT FID COLUMN:
+    # Use existing unique column (iso_a3) as feature identifier.
+    # This approach is simple, reliable, and uses meaningful feature IDs.
+    #
+    # Benefits:
+    # - Uses semantically meaningful identifiers (USA, CAN, FRA, etc.)
+    # - Works reliably with MapServer OGC API implementation
+    # - Simple configuration without complex driver dependencies
+    # - Enables direct feature access via: /collections/countries/items/{iso_a3}
+    #
+    CONNECTIONTYPE OGR
+    CONNECTION "ADBC:"
+    CONNECTIONOPTIONS
+      "ADBC_DRIVER" "duckdb"
+      "PRELUDE_STATEMENTS" "load spatial"
+      "PRELUDE_STATEMENTS" "set memory_limit = '256MB'"
+      "PRELUDE_STATEMENTS" "set home_directory = '.'"
+      "sql" "SELECT geometry, name, iso_a3, continent, pop_est FROM read_parquet('https://github.com/opengeospatial/geoparquet/raw/main/examples/example.parquet)"
+    END
+
+     # Alternative: Standard OGR connection (fallback):
+      # CONNECTIONTYPE OGR
+      # CONNECTION "./data/example.parquet"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    METADATA
+      "ows_title" "Countries (DuckDB)"     # required by OGC API
+      "gml_include_items" "all"   # required by OGC API
+      "gml_featureid" "iso_a3"    # Use iso_a3 as unique feature identifier (e.g., USA, CAN, FRA)
+      "wfs_use_default_extent_for_getfeature" "false"
+    END
+
+    CLASS
+      STYLE
+        COLOR 42 128 0
+      END
+    END
+
+    TEMPLATE "VOID" # required by OGC API for feature collections
+  END
+END

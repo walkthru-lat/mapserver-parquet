@@ -1,0 +1,88 @@
+MAP
+  NAME "GeoParquetExample"
+  SIZE 800 600
+  EXTENT -180 -90 180 90
+  IMAGECOLOR "#6DA9D2"
+
+  PROJECTION
+    "init=epsg:4326"
+  END
+
+  # Standard PNG output for quick rendering/debugging
+  OUTPUTFORMAT
+    NAME "png"
+    DRIVER "AGG/PNG"
+  END
+
+  # http://localhost:8080/walkthru?MAP=GEOPARQUET&MODE=tile&TILE={x}+{y}+{z}&LAYERS=countries&map.imagetype=mvt
+  OUTPUTFORMAT
+    NAME "mvt"
+    DRIVER "MVT"
+    MIMETYPE "application/vnd.mapbox-vector-tile"
+    EXTENSION "pbf"
+  END
+
+  # OGR/GEOJSON output so OGC API can serve collections/items as JSON
+  OUTPUTFORMAT
+    NAME "application/json"
+    DRIVER "OGR/GEOJSON"
+    MIMETYPE "application/json"
+    FORMATOPTION "FORM=SIMPLE"
+    FORMATOPTION "STORAGE=memory"
+  END
+
+  # http://localhost:8080/walkthru?MAP=GEOPARQUET1&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0
+  # http://localhost:8080/walkthru?MAP=GEOPARQUET1&mode=ogcapi&f=json
+  WEB
+    METADATA
+      # --- Common OWS/WFS/OGC API metadata ---
+      "ows_enable_request" "*"      # allow all OWS requests
+      "oga_enable_request" "*"      # enable OGC API requests
+
+      "ows_title" "GeoParquet Demo" # recommended for OGC API
+      "ows_abstract" "Demo service exposing GeoParquet as WFS, OGC API Features, and MVT tiles"
+      "ows_srs" "EPSG:4326 EPSG:3857" # advertise supported SRS
+
+      # Root URL for OGC API JSON/HTML responses
+      # Adjust to your Caddy path (here: /walkthru)
+      "oga_onlineresource" "http://localhost:8080/walkthru/GEOPARQUET/ogcapi"
+
+      # Location of HTML templates for OGC API (removed - using env var instead)
+      # "oga_html_template_directory" ".\\templates\\html-bootstrap"
+
+      # WFS-specific metadata
+      "wfs_title" "GeoParquet WFS Demo"
+      "wfs_srs" "EPSG:4326"
+    END
+  END
+
+  # --- Layer definition ---
+  LAYER
+    NAME "countries"
+    TYPE POLYGON
+    STATUS ON
+
+    # Data source: remote GeoParquet file accessed via GDAL /vsicurl/
+    CONNECTIONTYPE OGR
+    CONNECTION "/vsicurl/https://github.com/opengeospatial/geoparquet/raw/main/examples/example.parquet"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    METADATA
+      "ows_title" "Countries"     # required by OGC API
+      "gml_include_items" "all"   # required by OGC API
+      "gml_featureid" "iso_a3"       # required by OGC API
+      "wfs_use_default_extent_for_getfeature" "false"
+    END
+
+    CLASS
+      STYLE
+        COLOR 42 128 0
+      END
+    END
+
+    TEMPLATE "VOID" # required by OGC API for feature collections
+  END
+END

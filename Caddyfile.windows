@@ -1,0 +1,15 @@
+:8080 {
+    root * ./maps
+    file_server
+
+    # Match everything under /walkthru, not just the exact path
+    cgi /walkthru* ./.pixi/envs/default/bin/mapserv.exe {
+        script_name /walkthru
+        # This tells Caddy: the prefix is /walkthru, the rest is PATH_INFO
+        script_name /walkthru
+        dir .
+        env MAPSERVER_CONFIG_FILE=./mapserver.windows.conf
+        pass_all_env
+        # inspect
+    }
+}

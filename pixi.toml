@@ -8,7 +8,19 @@ version = "0.1.0"
 [tasks]
 install-xcaddy = "go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
 build-caddy = { cmd = "xcaddy build --with github.com/aksdb/caddy-cgi/v2", depends-on = ["install-xcaddy"] }
-serve = "./caddy run --config ./Caddyfile"
+
+# Cross-platform serve task - pixi auto-detects platform
+serve = { depends-on = ["build-caddy"] }
+
+# Platform-specific serve tasks (auto-detected by pixi)
+[target.win-64.tasks]
+serve = "./caddy run --config ./Caddyfile.windows"
+
+[target.linux-64.tasks]
+serve = "./caddy run --config ./Caddyfile.unix"
+
+[target.osx-arm64.tasks]
+serve = "./caddy run --config ./Caddyfile.unix"
 
 [dependencies]
 gdal = ">=3.11.4,<4"
