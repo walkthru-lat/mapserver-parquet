@@ -1,0 +1,17 @@
+[workspace]
+authors = ["Youssef-Harby <me@youssefharby.com>"]
+channels = ["conda-forge"]
+name = "mapserver-parquet"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+install-xcaddy = "go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
+build-caddy = { cmd = "xcaddy build --with github.com/aksdb/caddy-cgi/v2", depends-on = ["install-xcaddy"] }
+serve = "./caddy run --config ./Caddyfile"
+
+[dependencies]
+gdal = ">=3.11.4,<4"
+mapserver = ">=8.4.1,<9"
+libgdal-arrow-parquet = ">=3.11.4,<4"
+go = ">=1.25.1,<2"
