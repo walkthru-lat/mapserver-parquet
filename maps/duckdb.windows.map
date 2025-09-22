@@ -85,7 +85,8 @@ MAP
       "PRELUDE_STATEMENTS" "load spatial"
       "PRELUDE_STATEMENTS" "set memory_limit = '256MB'"
       "PRELUDE_STATEMENTS" "set home_directory = '.'"
-      "sql" "SELECT geometry, name, iso_a3, continent, pop_est FROM read_parquet('https://github.com/opengeospatial/geoparquet/raw/main/examples/example.parquet)"
+      "sql" "SELECT ST_AsText(geometry), name, iso_a3, continent, pop_est FROM read_parquet('https://raw.githubusercontent.com/opengeospatial/geoparquet/main/examples/example.parquet');"
+      # https://shell.duckdb.org/#queries=v0,INSTALL-spatial~,LOAD-spatial~,INSTALL-httpfs~,LOAD-httpfs~,SELECT-version()~,SELECT-ST_AsText(ST_Point(1%2C2))~,SELECT-COUNT(*)-FROM-read_parquet(%27https%3A%2F%2Fduckdb.org%2Fdata%2Fprices.parquet%27)~,SELECT-geometry%2C-name%2C-iso_a3%2C-continent%2C-pop_est-FROM-read_parquet(%27https%3A%2F%2Fraw.githubusercontent.com%2Fopengeospatial%2Fgeoparquet%2Fmain%2Fexamples%2Fexample.parquet%27)
     END
 
      # Alternative: Standard OGR connection (fallback):
