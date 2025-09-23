@@ -1,0 +1,63 @@
+{
+    http_port 8080
+    order cgi before respond
+    order cache before cgi
+
+    # Global cache configuration
+    cache {
+        # Storage configuration
+        nuts {
+            path ./cache/nuts
+            configuration {
+                Dir ./cache/nuts
+                SegmentSize 8192
+                SyncEnable true
+                NodeNum 64
+            }
+        }
+
+        # Cache management API (must be global)
+        api {
+            basepath /souin-api
+            prometheus
+            souin {
+                basepath /souin
+            }
+        }
+
+        # Default cache settings
+        ttl 3600s
+        stale 86400s
+        default_cache_control "public, max-age=3600"
+    }
+}
+
+:8080 {
+    root * ./maps
+    file_server
+
+    # Route-level cache configuration
+    cache {
+        # Exclude static files from caching
+        regex {
+            exclude ^/maps/.*$
+        }
+
+        # Optimized cache keys for MapServer requests
+        cache_keys {
+            # All MapServer requests use comprehensive key strategy
+            /walkthru.* {
+                headers MAP LAYERS SERVICE REQUEST BBOX CRS SRS FORMAT WIDTH HEIGHT TILE
+            }
+        }
+    }
+
+    # MapServer CGI handler
+    cgi /walkthru* {$MAPSERV_EXECUTABLE:mapserv} {
+        script_name /walkthru
+        dir .
+        env MAPSERVER_CONFIG_FILE=./mapserver.conf
+        pass_all_env
+        windows_header_fix
+    }
+}

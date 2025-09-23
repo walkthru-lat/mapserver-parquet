@@ -4,3 +4,6 @@
 caddy
 .claude/settings.local.json
 caddy.exe
+
+# Cache directory
+cache/

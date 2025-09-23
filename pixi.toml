@@ -7,8 +7,9 @@ version = "0.1.0"
 
 [tasks]
 install-xcaddy = "go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
-build-caddy = { cmd = "xcaddy build --with github.com/walkthru-lat/caddy-cgi/v2@main", depends-on = ["install-xcaddy"] }
+build-caddy = { cmd = "xcaddy build --with github.com/walkthru-lat/caddy-cgi/v2@main --with github.com/caddyserver/cache-handler --with github.com/darkweak/storages/nuts/caddy", depends-on = ["install-xcaddy"] }
 serve = { cmd = "./caddy run --config ./Caddyfile", env = { MAPSERV_EXECUTABLE = ".pixi/envs/default/bin/mapserv" } }
+serve-with-cache = { cmd = "./caddy run --config ./Caddyfile.cache", env = { MAPSERV_EXECUTABLE = ".pixi/envs/default/bin/mapserv" } }
 
 
 [dependencies]
