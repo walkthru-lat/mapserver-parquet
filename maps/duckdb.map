@@ -65,7 +65,7 @@ MAP
     NAME "countries"
     TYPE POLYGON
     STATUS ON
-    EXTENT -180 -90 180 90
+    # EXTENT -180 -90 180 90
 
     # Data source: Standard OGR connection to Parquet file
     #
@@ -80,13 +80,14 @@ MAP
     # - Enables direct feature access via: /collections/countries/items/{iso_a3}
     #
     CONNECTIONTYPE OGR
-    CONNECTION "ADBC:"
+    CONNECTION "ADBC:data/example.parquet"
     CONNECTIONOPTIONS
       "ADBC_DRIVER" "duckdb"
+      "PRELUDE_STATEMENTS" "load httpfs"
       "PRELUDE_STATEMENTS" "load spatial"
       "PRELUDE_STATEMENTS" "set memory_limit = '256MB'"
       "PRELUDE_STATEMENTS" "set home_directory = '.'"
-      "sql" "SELECT ST_AsText(geometry), name, iso_a3, continent, pop_est FROM read_parquet('https://raw.githubusercontent.com/opengeospatial/geoparquet/main/examples/example.parquet');"
+      "sql" "SELECT geometry, name, iso_a3, continent, pop_est FROM example;"
       # https://shell.duckdb.org/#queries=v0,INSTALL-spatial~,LOAD-spatial~,INSTALL-httpfs~,LOAD-httpfs~,SELECT-version()~,SELECT-ST_AsText(ST_Point(1%2C2))~,SELECT-COUNT(*)-FROM-read_parquet(%27https%3A%2F%2Fduckdb.org%2Fdata%2Fprices.parquet%27)~,SELECT-geometry%2C-name%2C-iso_a3%2C-continent%2C-pop_est-FROM-read_parquet(%27https%3A%2F%2Fraw.githubusercontent.com%2Fopengeospatial%2Fgeoparquet%2Fmain%2Fexamples%2Fexample.parquet%27)
     END
 

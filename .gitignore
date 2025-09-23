@@ -7,3 +7,4 @@ caddy.exe
 
 # Cache directory
 cache/
+*.log
