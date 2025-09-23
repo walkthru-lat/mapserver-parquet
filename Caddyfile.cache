@@ -10,7 +10,7 @@
             path ./cache/nuts
             configuration {
                 Dir ./cache/nuts
-                SegmentSize 8192
+                SegmentSize 65536
                 SyncEnable true
                 NodeNum 64
             }
@@ -39,7 +39,7 @@
         cache_keys {
             # All MapServer requests use comprehensive key strategy
             /walkthru.* {
-                headers MAP LAYERS SERVICE REQUEST BBOX CRS SRS FORMAT WIDTH HEIGHT TILE
+                headers MAP LAYERS SERVICE REQUEST BBOX CRS SRS FORMAT WIDTH HEIGHT TILE f limit offset datetime bbox-crs filter filter-lang filter-crs
             }
         }
     }
