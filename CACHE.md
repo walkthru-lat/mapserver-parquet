@@ -84,7 +84,7 @@ curl -I "http://localhost:8080/walkthru?MAP=GEOPARQUET&SERVICE=WMS&REQUEST=GetCa
 - `Cache-Status: Souin; hit; ttl=3594` - Cache HIT with remaining TTL
 - `Cache-Status: Souin; fwd=uri-miss; stored` - Cache MISS, response stored
 
-### Cache Directory
+### Cache Directory Management
 ```bash
 # View cache size
 du -sh cache/
@@ -94,17 +94,42 @@ ls -la cache/nuts/
 
 # Monitor cache in real-time
 watch "du -sh cache/ && echo 'Files:' && find cache/ -type f | wc -l"
+
+# Check cache effectiveness via headers
+watch "curl -s -I 'http://localhost:8080/walkthru?MAP=GEOPARQUET&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0' | grep Cache-Status"
 ```
 
 ## 🛠️ Cache Management
 
 ### View Cache Status
+
+**Primary Method - HTTP Headers:**
 ```bash
 # Check if caching is working
 curl -I "http://localhost:8080/walkthru?MAP=GEOPARQUET&SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"
 
 # Test cache hit (run same command twice)
 curl -I "http://localhost:8080/walkthru?MAP=GEOPARQUET&SERVICE=WFS&REQUEST=GetCapabilities&VERSION=2.0.0"
+```
+
+**Cache Management APIs:**
+```bash
+# Optional: API endpoints are not enabled by default for simplicity
+# To enable cache management APIs, add this to the global cache block in Caddyfile.cache:
+
+# api {
+#     basepath /souin-api
+#     prometheus
+#     souin {
+#         basepath /souin
+#     }
+# }
+
+# Once enabled, these endpoints would be available:
+# - http://localhost:8080/souin-api/souin (cache management)
+# - http://localhost:8080/souin-api/metrics (Prometheus metrics)
+#
+# For complete API documentation, see: https://docs.souin.io/
 ```
 
 ### Clear Cache

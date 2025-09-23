@@ -16,14 +16,6 @@
             }
         }
 
-        # Cache management API (must be global)
-        api {
-            basepath /souin-api
-            prometheus
-            souin {
-                basepath /souin
-            }
-        }
 
         # Default cache settings
         ttl 3600s
