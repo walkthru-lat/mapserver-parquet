@@ -4,6 +4,11 @@ MAP
   EXTENT -180 -90 180 90
   IMAGECOLOR "#6DA9D2"
 
+  # AWS S3 Configuration for /vsis3/ access to public buckets https://gis.stackexchange.com/questions/444892/does-mapservers-map-file-support-more-than-one-set-of-s3-credentials-using-vsi
+  CONFIG "AWS_NO_SIGN_REQUEST" "YES"
+  CONFIG "AWS_REGION" "us-west-2"
+  CONFIG "AWS_DEFAULT_REGION" "us-west-2"
+
   PROJECTION
     "init=epsg:4326"
   END
@@ -81,9 +86,11 @@ MAP
     TYPE POLYGON
     STATUS ON
 
-    # Data source: remote GeoParquet file accessed via GDAL /vsicurl/
+    # Data source: remote GeoParquet file accessed via GDAL /vsis3/
+    # S3 URL: s3://us-west-2.opendata.source.coop/tge-labs/globalbuildingatlas-lod1/e000_n20_e005_n15.parquet
+    # Requires AWS_NO_SIGN_REQUEST=YES and AWS_REGION=us-west-2 configuration
     CONNECTIONTYPE OGR
-    CONNECTION "/vsicurl/https://github.com/opengeospatial/geoparquet/raw/main/examples/example.parquet"
+    CONNECTION "/vsis3/us-west-2.opendata.source.coop/tge-labs/globalbuildingatlas-lod1/e000_n20_e005_n15.parquet"
 
     PROJECTION
       "init=epsg:4326"
@@ -92,7 +99,7 @@ MAP
     METADATA
       "ows_title" "Countries"     # required by OGC API
       "gml_include_items" "all"   # required by OGC API
-      "gml_featureid" "iso_a3"       # required by OGC API
+      "gml_featureid" "id"       # required by OGC API
       "wfs_use_default_extent_for_getfeature" "false"
 
       # WMS-specific metadata

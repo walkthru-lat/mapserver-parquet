@@ -17,6 +17,7 @@ gdal = ">=3.11.4,<4"
 mapserver = ">=8.4.1,<9"
 libgdal-arrow-parquet = ">=3.11.4,<4"
 go = ">=1.25.1,<2"
+awscli = ">=2.30.7,<3"
 
 [target.unix.dependencies]
 libgdal-adbc = ">=3.11.4,<4"
