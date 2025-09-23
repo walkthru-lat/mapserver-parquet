@@ -9,6 +9,7 @@ version = "0.1.0"
 install-xcaddy = "go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
 build-caddy = { cmd = "xcaddy build --with github.com/walkthru-lat/caddy-cgi/v2@main", depends-on = ["install-xcaddy"] }
 serve = { cmd = "./caddy run --config ./Caddyfile", env = { MAPSERV_EXECUTABLE = ".pixi/envs/default/bin/mapserv" } }
+auth-server = { cmd = "cd auth && go run auth_server.go" }
 
 
 [dependencies]

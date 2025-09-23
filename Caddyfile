@@ -7,14 +7,33 @@
     root * ./maps
     file_server
 
-    # Match everything under /walkthru, not just the exact path
-    # Cross-platform: uses MAPSERV_EXECUTABLE environment variable with mapserv default
-    cgi /walkthru* {$MAPSERV_EXECUTABLE:mapserv} {
-        script_name /walkthru
-        dir .
-        env MAPSERVER_CONFIG_FILE=./mapserver.conf
-        pass_all_env
-        windows_header_fix
-        # inspect
+    # Extract token from path for validation
+    @walkthru_with_token path_regexp token ^/walkthru/([^/]+)(.*)$
+
+    handle @walkthru_with_token {
+        # Forward auth to external validation service
+        forward_auth localhost:9000 {
+            uri /validate/{re.token.1}
+            copy_headers {
+                X-Validated-User>Remote-User
+            }
+        }
+
+        # Rewrite to remove token from path and add as query parameter
+        rewrite /walkthru{re.token.2}?token={re.token.1}&{query}
+
+        cgi /walkthru* {$MAPSERV_EXECUTABLE:mapserv} {
+            script_name /walkthru
+            dir .
+            env MAPSERVER_CONFIG_FILE=./mapserver.conf
+            pass_all_env
+            windows_header_fix
+        }
+
+    }
+
+    # Block all other /walkthru access
+    handle /walkthru* {
+        respond "Access denied - token required" 403
     }
 }

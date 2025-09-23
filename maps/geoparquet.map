@@ -43,9 +43,17 @@ MAP
       "ows_abstract" "Demo service exposing GeoParquet as WFS, OGC API Features, and MVT tiles"
       "ows_srs" "EPSG:4326 EPSG:3857" # advertise supported SRS
 
-      # Root URL for OGC API JSON/HTML responses
-      # Adjust to your Caddy path (here: /walkthru)
-      "oga_onlineresource" "http://localhost:8080/walkthru/GEOPARQUET/ogcapi"
+      # Root URL for OGC API JSON/HTML responses with token
+      # Uses runtime substitution with token parameter
+      "oga_onlineresource" "http://localhost:8080/walkthru/%token%/GEOPARQUET/ogcapi"
+
+      # Root URL for WFS XML responses with token
+      # Uses runtime substitution for WFS GetCapabilities
+      "wfs_onlineresource" "http://localhost:8080/walkthru/%token%/?map=GEOPARQUET&"
+
+      # Root URL for general OWS services with token
+      # Fallback for services without specific onlineresource
+      "ows_onlineresource" "http://localhost:8080/walkthru/%token%/?map=GEOPARQUET&"
 
       # Location of HTML templates for OGC API (use MapServer's bundled ones or your copy)
       # Adjust the path to where you installed MapServer templates
@@ -54,6 +62,12 @@ MAP
       # WFS-specific metadata
       "wfs_title" "GeoParquet WFS Demo"
       "wfs_srs" "EPSG:4326"
+    END
+
+    # Validation required for runtime substitution
+    VALIDATION
+      "token" "^[a-zA-Z0-9_-]+$"
+      "default_token" "default"
     END
   END
 

@@ -1,0 +1,13 @@
+tokens:
+  abc123:
+    user: "user1"
+    permissions: ["read", "write"]
+    expires: "2025-12-31"
+  def456:
+    user: "user2"
+    permissions: ["read"]
+    expires: "2025-06-30"
+  xyz789:
+    user: "admin"
+    permissions: ["read", "write", "admin"]
+    expires: "2026-01-01"
