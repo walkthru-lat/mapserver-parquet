@@ -54,6 +54,10 @@ MAP
       # WFS-specific metadata
       "wfs_title" "GeoParquet WFS Demo"
       "wfs_srs" "EPSG:4326"
+
+      # WMS-specific metadata
+      "wms_title" "GeoParquet WMS Demo"
+      "wms_srs" "EPSG:4326 EPSG:3857"
     END
   END
 
@@ -76,6 +80,11 @@ MAP
       "gml_include_items" "all"   # required by OGC API
       "gml_featureid" "iso_a3"       # required by OGC API
       "wfs_use_default_extent_for_getfeature" "false"
+
+      # WMS-specific metadata
+      "wms_title" "Countries"
+      "wms_description" "Countries from GeoParquet"
+      "wms_srs" "EPSG:4326 EPSG:3857"
     END
 
     CLASS
