@@ -2,3 +2,5 @@
 .pixi/*
 !.pixi/config.toml
 caddy
+.claude/settings.local.json
+caddy.exe

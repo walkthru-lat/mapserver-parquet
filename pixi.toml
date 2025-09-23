@@ -7,8 +7,9 @@ version = "0.1.0"
 
 [tasks]
 install-xcaddy = "go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
-build-caddy = { cmd = "xcaddy build --with github.com/aksdb/caddy-cgi/v2", depends-on = ["install-xcaddy"] }
-serve = "./caddy run --config ./Caddyfile"
+build-caddy = { cmd = "xcaddy build --with github.com/walkthru-lat/caddy-cgi/v2@main", depends-on = ["install-xcaddy"] }
+serve = { cmd = "./caddy run --config ./Caddyfile", env = { MAPSERV_EXECUTABLE = ".pixi/envs/default/bin/mapserv" } }
+
 
 [dependencies]
 gdal = ">=3.11.4,<4"

@@ -1,20 +1,20 @@
-# {
-#     http_port 8080
-#     order cgi before respond
-# }
+{
+    http_port 8080
+    order cgi before respond
+}
 
 :8080 {
     root * ./maps
     file_server
 
     # Match everything under /walkthru, not just the exact path
-    cgi /walkthru* ./.pixi/envs/default/bin/mapserv {
-        script_name /walkthru
-        # This tells Caddy: the prefix is /walkthru, the rest is PATH_INFO
+    # Cross-platform: uses MAPSERV_EXECUTABLE environment variable with mapserv default
+    cgi /walkthru* {$MAPSERV_EXECUTABLE:mapserv} {
         script_name /walkthru
         dir .
         env MAPSERVER_CONFIG_FILE=./mapserver.conf
         pass_all_env
+        windows_header_fix
         # inspect
     }
 }
