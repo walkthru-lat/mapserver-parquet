@@ -8,7 +8,6 @@ version = "0.1.0"
 [tasks]
 install-xcaddy = "go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
 build-caddy = { cmd = "xcaddy build --with github.com/walkthru-lat/caddy-cgi/v2@main --with github.com/caddyserver/cache-handler --with github.com/darkweak/storages/nuts/caddy", depends-on = ["install-xcaddy"] }
-setup-duckdb = { cmd = "bash scripts/setup-libduckdb.sh", description = "Download and install DuckDB library" }
 serve = { cmd = "./caddy run --config ./Caddyfile", env = { MAPSERV_EXECUTABLE = ".pixi/envs/default/bin/mapserv" } }
 serve-with-cache = { cmd = "./caddy run --config ./Caddyfile.cache", env = { MAPSERV_EXECUTABLE = ".pixi/envs/default/bin/mapserv" } }
 
